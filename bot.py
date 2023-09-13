@@ -47,8 +47,8 @@ async def cancel_handler(message: Message, state: FSMContext) -> None:
 @dp.message(CommandStart)
 async def cmd_start(message: Message) -> None:
     await message.answer(bold("Добро пожаловать в hork3!") + "\n\n" + "Здесь вы сможете хранить и обмениваться дз "
-                                                                      "в ресурсах/. Чтобы начать пользоваться, "
-                                                                      "введите функцию //all/.")
+                                                                      "в ресурсах\. Чтобы начать пользоваться, "
+                                                                      "введите функцию /all\.")
 
 
 @dp.callback_query(messages.AddResource.filter())
