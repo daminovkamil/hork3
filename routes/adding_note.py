@@ -9,6 +9,25 @@ class AddingMessage(StatesGroup):
     name = State()
 
 
+@router.message(Command("cancel"))
+@router.message(F.text.casefold() == "cancel")
+@router.message(AddingMessage.name)
+async def cancel_handler(message: Message, state: FSMContext) -> None:
+    data = await state.get_data()
+    if "messages" in data:
+        for item in data["messages"]:
+            await try_delete_msg(item)
+    resource_id = data["resource_id"]
+    for user_id, message_id in database.get_messages_with_resource(resource_id):
+        await try_bot_edit_msg_text(
+            chat_id=user_id,
+            message_id=message_id,
+            **messages.get_resource(resource_id, user_id, False)
+        )
+    await state.clear()
+    await try_delete_msg(message)
+
+
 @router.callback_query(messages.AddNote.filter())
 async def adding_note(query: CallbackQuery, callback_data: messages.ViewResource, state: FSMContext) -> None:
     await state.set_state(AddingMessage.name)

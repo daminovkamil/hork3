@@ -3,6 +3,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 import aiogram.utils.markdown as md
 from aiogram.enums import ParseMode
+from aiogram.filters import Command
 from aiogram import Bot, Router, F
 from asyncio import sleep
 import messages

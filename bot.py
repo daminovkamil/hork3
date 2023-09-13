@@ -2,7 +2,6 @@ import asyncio
 import sys
 
 from aiogram import Dispatcher
-from aiogram.filters import Command
 from aiogram.types import ErrorEvent
 
 import routes.joining_resource
