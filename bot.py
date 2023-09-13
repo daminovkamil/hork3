@@ -27,7 +27,7 @@ async def error_handler(event: ErrorEvent, message: Message):
 @dp.error(F.update.callback_query.as_("query"))
 async def error_handler(event: ErrorEvent, query: CallbackQuery):
     logging.critical("Critical error caused by %s", event.exception, exc_info=True)
-    await query.answer("Возникла ошибка(( Обратитесь, пожалуйста, к разработчику")
+    await query.answer("Возникла ошибка(( Обратитесь, пожалуйста, к разработчику", cache_time=20)
 
 
 @dp.message(Command("cancel"))
@@ -56,7 +56,7 @@ async def cmd_start(message: Message) -> None:
 async def adding_resource(query: CallbackQuery) -> None:
     resource = database.create_resource(query.from_user.id)
     await try_edit_msg(query.message, **messages.get_user_resources(query.from_user.id))
-    await query.answer(f"Создан ресурс #{resource.id}")
+    await query.answer(f"Создан ресурс #{resource.id}", cache_time=20)
 
 
 @dp.message(Command('all'))
