@@ -2,7 +2,7 @@ import asyncio
 import sys
 
 from aiogram import Dispatcher
-from aiogram.filters import Command, CommandStart
+from aiogram.filters import Command
 from aiogram.types import ErrorEvent
 from aiogram.utils.markdown import *
 
@@ -44,7 +44,8 @@ async def cancel_handler(message: Message, state: FSMContext) -> None:
     await try_delete_msg(message)
 
 
-@dp.message(CommandStart)
+@dp.message(Command('start'))
+@dp.message(F.text.casefold() == "start")
 async def cmd_start(message: Message) -> None:
     await message.answer(bold("Добро пожаловать в hork3!") + "\n\n" + "Здесь вы сможете хранить и обмениваться дз "
                                                                       "в ресурсах\. Чтобы начать пользоваться, "
