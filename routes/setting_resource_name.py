@@ -24,6 +24,6 @@ async def finishing_setting_name(message: Message, state: FSMContext) -> None:
     user_id = message.from_user.id
     name = message.text.replace("\n", "  ")
     database.set_resource_name(resource_id, user_id, name)
-    await try_edit_msg(query.message, **messages.get_resource(resource_id, user_id))
+    await try_edit_msg(query.message, **messages.get_resource(resource_id, user_id, False))
     await delete_messages(state)
     await state.clear()
