@@ -15,6 +15,9 @@ dp.include_router(routes.joining_resource.router)
 dp.include_router(routes.setting_resource_name.router)
 dp.include_router(routes.adding_note.router)
 
+router = Router(name=__name__)
+dp.include_router(router)
+
 
 @dp.error(F.update.message.as_("message"))
 async def error_handler(event: ErrorEvent, message: Message):
@@ -28,8 +31,8 @@ async def error_handler(event: ErrorEvent, query: CallbackQuery):
     await query.answer("Возникла ошибка(( Обратитесь, пожалуйста, к разработчику", cache_time=20)
 
 
-@dp.message(Command("cancel"))
-@dp.message(F.text.casefold() == "cancel")
+@router.message(Command("cancel"))
+@router.message(F.text.casefold() == "cancel")
 async def cancel_handler(message: Message, state: FSMContext) -> None:
     current_state = await state.get_state()
     if current_state is None:
@@ -42,8 +45,8 @@ async def cancel_handler(message: Message, state: FSMContext) -> None:
     await try_delete_msg(message)
 
 
-@dp.message(Command('start'))
-@dp.message(F.text.casefold() == "start")
+@router.message(Command('start'))
+@router.message(F.text.casefold() == "start")
 async def cmd_start(message: Message) -> None:
     await message.answer(
         md.bold("Добро пожаловать в hork3!") + "\n\n" +
@@ -52,19 +55,19 @@ async def cmd_start(message: Message) -> None:
     )
 
 
-@dp.callback_query(messages.AddResource.filter())
+@router.callback_query(messages.AddResource.filter())
 async def adding_resource(query: CallbackQuery) -> None:
     resource = database.create_resource(query.from_user.id)
     await try_edit_msg(query.message, **messages.get_user_resources(query.from_user.id))
     await query.answer(f"Создан ресурс #{resource.id}", cache_time=5)
 
 
-@dp.message(Command('all'))
+@router.message(Command('all'))
 async def cmd_all_showing_resources(message: Message) -> None:
     await message.answer(**messages.get_user_resources(message.from_user.id))
 
 
-@dp.callback_query(messages.ViewAllResources.filter())
+@router.callback_query(messages.ViewAllResources.filter())
 async def showing_resources(query: CallbackQuery) -> None:
     message_id = database.get_message_with_user(query.from_user.id)
     if message_id == query.message.message_id:
@@ -72,7 +75,7 @@ async def showing_resources(query: CallbackQuery) -> None:
     await try_edit_msg(query.message, **messages.get_user_resources(query.from_user.id))
 
 
-@dp.callback_query(messages.ViewResource.filter())
+@router.callback_query(messages.ViewResource.filter())
 async def showing_resource(query: CallbackQuery, callback_data: messages.ViewResource) -> None:
     message_id = database.update_resource_message(
         resource_id=callback_data.resource_id,
@@ -87,7 +90,7 @@ async def showing_resource(query: CallbackQuery, callback_data: messages.ViewRes
     ))
 
 
-@dp.callback_query(messages.ClearNotes.filter())
+@router.callback_query(messages.ClearNotes.filter())
 async def clearing_notes(query: CallbackQuery, callback_data: messages.AddNote) -> None:
     resource = database.Resource(resource_id=callback_data.resource_id)
     resource.current = []
@@ -99,7 +102,7 @@ async def clearing_notes(query: CallbackQuery, callback_data: messages.AddNote) 
     ))
 
 
-@dp.callback_query(messages.ViewResourceArchive.filter())
+@router.callback_query(messages.ViewResourceArchive.filter())
 async def viewing_archive(query: CallbackQuery, callback_data: messages.ViewResourceArchive) -> None:
     resource = database.Resource(callback_data.resource_id)
     for note in resource.archive[-15:]:
@@ -124,7 +127,7 @@ async def viewing_archive(query: CallbackQuery, callback_data: messages.ViewReso
         await query.message.answer(note.text + "\n\n" + data_string)
 
 
-@dp.callback_query(messages.DeleteResource.filter())
+@router.callback_query(messages.DeleteResource.filter())
 async def deleting_resource(query: CallbackQuery, callback_data: messages.DeleteResource) -> None:
     resource_id = callback_data.resource_id
     user_id = query.from_user.id
