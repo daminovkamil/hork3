@@ -9,9 +9,8 @@ class AddingMessage(StatesGroup):
     name = State()
 
 
-@router.message(Command("cancel"))
-@router.message(F.text.casefold() == "cancel")
-@router.message(AddingMessage.name)
+@router.message(Command("cancel"), AddingMessage.name)
+@router.message(F.text.casefold() == "cancel", AddingMessage.name)
 async def cancel_handler(message: Message, state: FSMContext) -> None:
     data = await state.get_data()
     if "messages" in data:
@@ -77,18 +76,17 @@ async def finishing_addition(message: Message, state: FSMContext) -> None:
 
     resource = database.Resource(resource_id)
     if message.content_type == "text":
-        data = {
+        note = database.Note({
             "type": "text",
             "text": message.md_text,
             "author": md.link(username, f"tg://user?id={user_id}"),
             "created": message.date.timestamp(),
-        }
+        })
+        resource.current.append(note)
+        resource.archive.append(note)
+        resource.save()
     else:
         pass
-    note = database.Note(data)
-    resource.current.append(note)
-    resource.archive.append(note)
-    resource.save()
     for user_id, message_id in database.get_messages_with_resource(resource_id):
         await try_bot_edit_msg_text(
             chat_id=user_id,
