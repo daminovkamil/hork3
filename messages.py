@@ -11,6 +11,10 @@ class ViewResource(CallbackData, prefix="view_resource"):
     full: bool
 
 
+class DeleteResource(CallbackData, prefix="delete_resource"):
+    resource_id: int
+
+
 class ViewAllResources(CallbackData, prefix="view_all_resources"):
     pass
 
@@ -117,6 +121,20 @@ def get_resource(resource_id: int, user_id: int, full: bool):
             text="Архив записей",
             callback_data=ViewResourceArchive(resource_id=resource_id),
         )
+        if resource.admin_id == user_id:
+            keyboard.button(
+                text="Удалить ресурс",
+                callback_data=DeleteResource(
+                    resource_id=resource_id,
+                )
+            )
+        else:
+            keyboard.button(
+                text="Открепить ресурс",
+                callback_data=DeleteResource(
+                    resource_id=resource_id,
+                )
+            )
         keyboard.adjust(2, 2, 1, 1)
     else:
         keyboard.button(text="Больше", callback_data=ViewResource(resource_id=resource_id, full=True))

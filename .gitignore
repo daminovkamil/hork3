@@ -2,3 +2,5 @@
 __pecache__
 config.py
 venv
+output.txt
+nohup.out

@@ -115,6 +115,22 @@ async def viewing_archive(query: CallbackQuery, callback_data: messages.ViewReso
         await query.message.answer(note.text + "\n\n" + data_string)
 
 
+@dp.callback_query(messages.DeleteResource.filter())
+async def deleting_resource(query: CallbackQuery, callback_data: messages.DeleteResource) -> None:
+    resource_id = callback_data.resource_id
+    user_id = query.from_user.id
+    resource = database.Resource(resource_id)
+    if resource.admin_id == user_id:
+        resource.delete()
+    elif user_id in resource.users:
+        resource.users.remove(user_id)
+        resource.save()
+    message_id = database.get_message_with_user(user_id)
+    if message_id == query.message.message_id:
+        database.delete_message_with_user(user_id)
+    await query.message.edit_text(**messages.get_user_resources(user_id))
+
+
 async def main() -> None:
     await dp.start_polling(bot)
 
