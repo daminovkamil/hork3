@@ -33,6 +33,9 @@ async def finishing_joining_resource(message: Message, state: FSMContext) -> Non
     resource = database.Resource(resource_id)
     resource.users.append(message.from_user.id)
     resource.save()
+    name = database.get_resource_name(resource_id, resource.admin_id)
+    if name is not None:
+        database.set_resource_name(resource_id, message.from_user.id, name)
     await delete_messages(state)
     data = await state.get_data()
     await state.clear()
