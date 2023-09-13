@@ -44,7 +44,7 @@ async def adding_note(query: CallbackQuery, callback_data: messages.ViewResource
         data = messages.get_resource(resource_id, user_id, False)
         text = data["text"] + "\n\n"
         markup = data["reply_markup"]
-        text += md.link(username, f"tg://user?id={author_id}") + md.text(" печатает...")
+        text += md.link(username, f"tg://user?id={author_id}") + " печатает\.\.\."
         await try_bot_edit_msg_text(chat_id=user_id,
                                     message_id=message_id,
                                     text=text,

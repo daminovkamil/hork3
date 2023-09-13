@@ -19,7 +19,7 @@ dp.include_router(routes.adding_note.router)
 @dp.error(F.update.message.as_("message"))
 async def error_handler(event: ErrorEvent, message: Message):
     logging.critical("Critical error caused by %s", event.exception, exc_info=True)
-    await message.answer(md.text("Возникла ошибка(( Обратитесь, пожалуйста, к разработчику"))
+    await message.answer("Возникла ошибка\(\( Обратитесь, пожалуйста, к разработчику")
 
 
 @dp.error(F.update.callback_query.as_("query"))
@@ -47,8 +47,8 @@ async def cancel_handler(message: Message, state: FSMContext) -> None:
 async def cmd_start(message: Message) -> None:
     await message.answer(
         md.bold("Добро пожаловать в hork3!") + "\n\n" +
-        md.text("Здесь вы сможете хранить и обмениваться дз в ресурсах.") + " " +
-        md.text("Чтобы начать пользоваться, введите функцию /all.")
+        "Здесь вы сможете хранить и обмениваться дз в ресурсах\. " +
+        "Чтобы начать пользоваться, введите функцию /all\."
     )
 
 
@@ -56,7 +56,7 @@ async def cmd_start(message: Message) -> None:
 async def adding_resource(query: CallbackQuery) -> None:
     resource = database.create_resource(query.from_user.id)
     await try_edit_msg(query.message, **messages.get_user_resources(query.from_user.id))
-    await query.answer(md.text(f"Создан ресурс #{resource.id}"), cache_time=5)
+    await query.answer(f"Создан ресурс #{resource.id}", cache_time=5)
 
 
 @dp.message(Command('all'))
