@@ -2,8 +2,9 @@ import asyncio
 import sys
 
 from aiogram import Dispatcher
-from aiogram.filters import Command
+from aiogram.filters import Command, CommandStart
 from aiogram.types import ErrorEvent
+from aiogram.utils.markdown import *
 
 import routes.joining_resource
 import routes.setting_resource_name
@@ -41,6 +42,13 @@ async def cancel_handler(message: Message, state: FSMContext) -> None:
             await try_delete_msg(item)
     await state.clear()
     await try_delete_msg(message)
+
+
+@dp.message(CommandStart)
+async def cmd_start(message: Message) -> None:
+    await message.answer(bold("Добро пожаловать в hork3!") + "\n\n" + "Здесь вы сможете хранить и обмениваться дз "
+                                                                      "в ресурсах/. Чтобы начать пользоваться, "
+                                                                      "введите функцию //all/.")
 
 
 @dp.callback_query(messages.AddResource.filter())
