@@ -40,5 +40,4 @@ async def finishing_joining_resource(message: Message, state: FSMContext) -> Non
     data = await state.get_data()
     await state.clear()
     query: CallbackQuery = data["query"]
-    await query.answer("Вы успешно присоединились к ресурсу #%s" % resource_id, cache_time=20)
     await try_edit_msg(query.message, **messages.get_user_resources(message.from_user.id))
