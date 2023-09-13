@@ -23,9 +23,9 @@ async def adding_note(query: CallbackQuery, callback_data: messages.ViewResource
         username = "@" + query.from_user.username
     for user_id, message_id in database.get_messages_with_resource(resource_id):
         data = messages.get_resource(resource_id, user_id, False)
-        text = data["text"]
+        text = data["text"] + "\n\n"
         markup = data["reply_markup"]
-        text += "\n\n" + f"[{username}](tg://user?id={author_id}) печатает\.\.\."
+        text += md.link(username, f"tg://user?id={author_id}") + md.text(" печатает...")
         await try_bot_edit_msg_text(chat_id=user_id,
                                     message_id=message_id,
                                     text=text,
@@ -50,6 +50,7 @@ async def finishing_addition(message: Message, state: FSMContext) -> None:
     data = await state.get_data()
     resource_id = data["resource_id"]
     user_id = message.from_user.id
+
     if message.from_user.username is None:
         username = "@Автор"
     else:
@@ -60,7 +61,7 @@ async def finishing_addition(message: Message, state: FSMContext) -> None:
         data = {
             "type": "text",
             "text": message.md_text,
-            "author": f"[{username}](tg://user?id={user_id})",
+            "author": md.link(username, f"tg://user?id={user_id}"),
             "created": message.date.timestamp(),
         }
     else:

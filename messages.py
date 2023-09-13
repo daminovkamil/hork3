@@ -1,7 +1,7 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.filters.callback_data import CallbackData
 from aiogram.types import InlineKeyboardButton
-from aiogram.utils.markdown import *
+import aiogram.utils.markdown as md
 import datetime
 import database
 
@@ -77,12 +77,12 @@ def get_resource(resource_id: int, user_id: int, full: bool):
     info = []
     name = database.get_resource_name(resource_id, user_id)
     if name is not None:
-        info.append(code(f"#{resource_id}") + " " + bold(name))
+        info.append(md.code(f"#{resource_id}") + " " + md.bold(name))
     else:
-        info.append(code(f"Ресурс #{resource_id}"))
-        info.append(italic("Пока вы никак не назвали этот ресурс"))
+        info.append(md.code(f"Ресурс #{resource_id}"))
+        info.append(md.italic("Пока вы никак не назвали этот ресурс"))
     if full:
-        info.append(f"Инвайт код для других:\n{code(resource.invite)}")
+        info.append(f"Инвайт код для других:\n{md.code(resource.invite)}")
     for message in resource.current:
         created = datetime.date.fromtimestamp(message.created)
         weekdays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
