@@ -23,7 +23,7 @@ async def finishing_joining_resource(message: Message, state: FSMContext) -> Non
     invite = message.text
     resource_id = database.resource_with_invite(invite)
     if resource_id is None:
-        answer = await message.answer("Нет ресурса с таким инвайт кодом((")
+        answer = await message.answer("Нет ресурса с таким инвайт кодом\(\(")
         await add_message(answer, state)
         return
     if resource_id in database.resources_with_user(message.from_user.id):
