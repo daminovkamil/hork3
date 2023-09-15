@@ -7,6 +7,20 @@ class JoiningResource(StatesGroup):
     invite = State()
 
 
+@router.message(Command("cancel"))
+@router.message(F.text.casefold() == "cancel")
+async def cancel_handler(message: Message, state: FSMContext) -> None:
+    current_state = await state.get_state()
+    if current_state is None:
+        return
+    data = await state.get_data()
+    if "messages" in data:
+        for item in data["messages"]:
+            await try_delete_msg(item)
+    await state.clear()
+    await try_delete_msg(message)
+
+
 @router.callback_query(messages.JoinResource.filter())
 async def joining_resource(query: CallbackQuery, state: FSMContext) -> None:
     await state.set_state(JoiningResource.invite)
