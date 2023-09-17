@@ -100,7 +100,7 @@ def get_resource(resource_id: int, user_id: int, full: bool):
             "Ноября",
             "Декабря"
         ]
-        created = f"{weekdays[created.weekday()]}, {created.day} {months[created.month]}"
+        created = f"{weekdays[created.weekday()]}, {created.day} {months[created.month - 1]}"
         data_string = f"{message.author} {created}"
         if info[-1] == data_string:
             info.pop()

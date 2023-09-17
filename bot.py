@@ -122,7 +122,7 @@ async def viewing_archive(query: CallbackQuery, callback_data: messages.ViewReso
             "Ноября",
             "Декабря"
         ]
-        created = f"{weekdays[created.weekday()]}, {created.day} {months[created.month]}"
+        created = f"{weekdays[created.weekday()]}, {created.day} {months[created.month - 1]}"
         data_string = f"{note.author} {created}"
         await query.message.answer(note.text + "\n\n" + data_string)
 
